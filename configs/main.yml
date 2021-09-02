@@ -1,0 +1,15 @@
+db_file: "bot.db"
+
+bot_url: "https://t.me/rss_feeddy_bot"
+
+messages:
+  responses:
+    start: "Я сохранил тебя в системе. Теперь ты можешь присылать мне ссылки на фиды"
+    already_authorized: "Ты уже авторизован. Присылай ссылку, а я ее сохраню."
+    saved_successfully: "Ссылка успешно сохранена!"
+    unknown_command: "Я не знаю такой команды"
+  errors:
+    invalid_url: "Это невалидная ссылка"
+    unauthorized: "Ты не авторизован! Используй команду /start"
+    unable_to_save: "Увы, не удалось сохранить ссылку. Попробуй еще раз позже"
+    default: "Произошла неизвестная ошибка"
