@@ -6,6 +6,7 @@ import (
 	"github.com/tumarov/feeddy/pkg/config"
 	"github.com/tumarov/feeddy/pkg/logger"
 	"github.com/tumarov/feeddy/pkg/logger/builtin"
+	rssParser "github.com/tumarov/feeddy/pkg/parser"
 	"github.com/tumarov/feeddy/pkg/repository/mongodb"
 	"github.com/tumarov/feeddy/pkg/telegram"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,7 +40,16 @@ func main() {
 
 	telegramBot := telegram.NewBot(log, bot, feedRepository, cfg.Messages)
 
-	if err := telegramBot.Start(); err != nil {
+	go func() {
+		if err := telegramBot.Start(); err != nil {
+			log.Exception(err)
+			l.Fatal(err)
+		}
+	}()
+
+	parser := rssParser.NewRSSReader(feedRepository, cfg, telegramBot)
+
+	if err := parser.Start(); err != nil {
 		log.Exception(err)
 		l.Fatal(err)
 	}

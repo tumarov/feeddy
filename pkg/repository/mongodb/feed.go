@@ -88,3 +88,24 @@ func (r *FeedRepository) Remove(feed repository.Feed, feedURLToRemove string) er
 
 	return nil
 }
+
+func (r *FeedRepository) GetAll() ([]repository.Feed, error) {
+	cursor, err := r.collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	var results []repository.Feed
+
+	for cursor.Next(context.TODO()) {
+		var feed repository.Feed
+		err := cursor.Decode(&feed)
+		if err != nil {
+			return nil, err
+		}
+
+		results = append(results, feed)
+	}
+
+	return results, nil
+}

@@ -12,4 +12,5 @@ type FeedRepository interface {
 	Add(feed Feed, feedURL string) error
 	Get(chatID int64) (*Feed, error)
 	Remove(feed Feed, feedURLToRemove string) error
+	GetAll() ([]Feed, error)
 }

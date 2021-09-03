@@ -7,6 +7,13 @@ import (
 	"github.com/tumarov/feeddy/pkg/repository"
 )
 
+type RSSEntry struct {
+	Title       string
+	Link        string
+	Description string
+	Published   string
+}
+
 type Bot struct {
 	bot            *tgbotapi.BotAPI
 	log            logger.Logger
@@ -55,6 +62,16 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 
 		if err := b.handleMessage(update.Message); err != nil {
 			b.handleError(update.Message.Chat.ID, err)
+		}
+	}
+}
+
+func (b *Bot) SendFeeds(chatID int64, feeds []RSSEntry) {
+	for _, feed := range feeds {
+		msg := tgbotapi.NewMessage(chatID, feed.Link)
+		_, err := b.bot.Send(msg)
+		if err != nil {
+			continue
 		}
 	}
 }
