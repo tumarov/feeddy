@@ -4,17 +4,19 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/tumarov/feeddy/pkg/config"
 	"github.com/tumarov/feeddy/pkg/logger"
+	"github.com/tumarov/feeddy/pkg/repository"
 )
 
 type Bot struct {
-	bot *tgbotapi.BotAPI
-	log logger.Logger
+	bot            *tgbotapi.BotAPI
+	log            logger.Logger
+	feedRepository repository.FeedRepository
 
 	messages config.Messages
 }
 
-func NewBot(log logger.Logger, bot *tgbotapi.BotAPI, messages config.Messages) *Bot {
-	return &Bot{log: log, bot: bot, messages: messages}
+func NewBot(log logger.Logger, bot *tgbotapi.BotAPI, fr repository.FeedRepository, messages config.Messages) *Bot {
+	return &Bot{log: log, bot: bot, feedRepository: fr, messages: messages}
 }
 
 func (b *Bot) Start() error {

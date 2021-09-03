@@ -15,10 +15,13 @@ type Errors struct {
 }
 
 type Responses struct {
-	Start             string `mapstructure:"start"`
-	AlreadyAuthorized string `mapstructure:"already_authorized"`
-	SavedSuccessfully string `mapstructure:"saved_successfully"`
-	UnknownCommand    string `mapstructure:"unknown_command"`
+	Start               string `mapstructure:"start"`
+	AlreadyAuthorized   string `mapstructure:"already_authorized"`
+	SavedSuccessfully   string `mapstructure:"saved_successfully"`
+	RemovedSuccessfully string `mapstructure:"removed_successfully"`
+	ListEmpty           string `mapstructure:"list_empty"`
+	Help                string `mapstructure:"help"`
+	UnknownCommand      string `mapstructure:"unknown_command"`
 }
 
 func initMessages(cfg *Config) error {
