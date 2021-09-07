@@ -34,7 +34,7 @@ func main() {
 		log.Exception(err)
 		l.Fatal(err)
 	}
-	log.Debugf("Connected to MongoDB on %s", cfg.DBPath)
+	log.Debugf("Connected to database")
 
 	feedRepository := mongodb.NewFeedRepository(db, cfg)
 
