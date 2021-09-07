@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: "registry.gitlab.com"
-  IMAGE_NAME: "/kybernated/private/bot/feeddy"
+  IMAGE_NAME: "kybernated/private/bot/feeddy"
 
 jobs:
   build_and_push:
