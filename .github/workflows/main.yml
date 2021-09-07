@@ -8,6 +8,7 @@ on:
 env:
   REGISTRY: "registry.gitlab.com"
   IMAGE_NAME: "kybernated/private/bot/feeddy"
+  CONTAINER_NAME: "feeddy"
 
 jobs:
   build_and_push:
@@ -29,3 +30,33 @@ jobs:
 
       - name: Push image to Gitlab Container Registry
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME
+          script: |
+            # Login to Gitlab Container Registry
+            docker login -u ${{ secrets.GITLAB_USER }} -p ${{ secrets.GITLAB_ACCESS_TOKEN }} $(echo $REGISTRY)
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME)
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME)
+            # Set env variables
+            export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+            export ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+            export DB_PATH=${{ secrets.DB_PATH }}
+            # Run a new container from a new image
+            docker run -d -e TELEGRAM_BOT_TOKEN -e ENVIRONMENT -e DB_PATH \
+            --restart always \
+            --name $(echo $CONTAINER_NAME) \
+            --network host \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
