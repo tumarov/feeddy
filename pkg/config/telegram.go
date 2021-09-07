@@ -18,5 +18,5 @@ func (t *Telegram) init(cfg *Config) error {
 
 func (t *Telegram) parseEnv(cfg *Config) {
 	cfg.Telegram.Token = viper.GetString("TELEGRAM_BOT_TOKEN")
-	cfg.Telegram.Debug = viper.GetString("ENVIRONMENT") == "dev"
+	cfg.Telegram.Debug = cfg.Environment == "dev"
 }
