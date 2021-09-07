@@ -23,7 +23,7 @@ jobs:
       - name: Log in to Gitlab Container Registry
         uses: docker/login-action@v1
         with:
-          registry: $(echo $REGISTRY)
+          registry: registry.gitlab.com
           username: ${{ secrets.GITLAB_USER }}
           password: ${{ secrets.GITLAB_ACCESS_TOKEN }}
 
