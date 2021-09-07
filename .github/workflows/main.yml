@@ -24,7 +24,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: $(echo $REGISTRY)
-          user: ${{ secrets.GITLAB_USER }}
+          username: ${{ secrets.GITLAB_USER }}
           password: ${{ secrets.GITLAB_ACCESS_TOKEN }}
 
       - name: Push image to Gitlab Container Registry
