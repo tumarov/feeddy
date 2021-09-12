@@ -5,13 +5,15 @@ import (
 	"github.com/tumarov/feeddy/pkg/config"
 	"github.com/tumarov/feeddy/pkg/logger"
 	"github.com/tumarov/feeddy/pkg/repository"
+	"time"
 )
 
 type RSSEntry struct {
-	Title       string
-	Link        string
-	Description string
-	Published   string
+	Title           string
+	Link            string
+	Description     string
+	Published       string
+	PublishedParsed time.Time
 }
 
 type Bot struct {

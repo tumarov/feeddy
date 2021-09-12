@@ -60,8 +60,8 @@ func (b *Bot) handleListCommand(message *tgbotapi.Message) error {
 
 	var response string
 
-	for _, feedURL := range found.Feeds {
-		response += feedURL + "\n"
+	for _, feed := range found.Feeds {
+		response += feed.URL + "\n"
 	}
 
 	if response == "" {

@@ -28,7 +28,10 @@ func (r *RSSReader) Start() error {
 		}
 
 		for _, user := range users {
-			entries := fetchFeeds(user, parser)
+			entries, err := r.fetchFeeds(user, parser)
+			if err != nil {
+				return err
+			}
 			r.bot.SendFeeds(user.ChatID, entries)
 		}
 
@@ -36,28 +39,45 @@ func (r *RSSReader) Start() error {
 	}
 }
 
-func fetchFeeds(user repository.Feed, parser *gofeed.Parser) []telegram.RSSEntry {
+func (r *RSSReader) fetchFeeds(user repository.UserFeed, parser *gofeed.Parser) ([]telegram.RSSEntry, error) {
 	var entries []telegram.RSSEntry
 
-	for _, feedURL := range user.Feeds {
-		parsedFeed, err := parser.ParseURL(feedURL)
+	var feedsToUpdate []repository.Feed
+	for _, feed := range user.Feeds {
+		parsedFeed, err := parser.ParseURL(feed.URL)
 		if err != nil {
 			continue
 		}
 
 		for _, it := range parsedFeed.Items {
-			if it.PublishedParsed.After(time.Now().Add(-timeout * time.Minute)) {
-				entries = append(entries, telegram.RSSEntry{
-					Title:       it.Title,
-					Link:        it.Link,
-					Description: it.Description,
-					Published:   it.Published,
+			if it.PublishedParsed.After(feed.LastRead) {
+				entries = prependItem(entries, telegram.RSSEntry{
+					Title:           it.Title,
+					Link:            it.Link,
+					Description:     it.Description,
+					Published:       it.Published,
+					PublishedParsed: *it.PublishedParsed,
 				})
 			} else {
 				break
 			}
 		}
+		if len(entries) > 0 {
+			feed.LastRead = entries[len(entries)-1].PublishedParsed
+		}
+		feedsToUpdate = append(feedsToUpdate, feed)
 	}
 
-	return entries
+	if len(entries) > 0 {
+		err := r.repo.Save(repository.UserFeed{ChatID: user.ChatID, Feeds: feedsToUpdate})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return entries, nil
+}
+
+func prependItem(items []telegram.RSSEntry, item telegram.RSSEntry) []telegram.RSSEntry {
+	return append([]telegram.RSSEntry{item}, items...)
 }
