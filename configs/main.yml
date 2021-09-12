@@ -2,6 +2,8 @@ db_name: "feeddy"
 
 bot_url: "https://t.me/rss_feeddy_bot"
 
+reader_timeout: 5
+
 messages:
   responses:
     start: "Я сохранил тебя в системе. Теперь ты можешь присылать мне ссылки на фиды"

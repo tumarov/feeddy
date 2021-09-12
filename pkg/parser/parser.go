@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-const timeout = 5
-
 type RSSReader struct {
 	repo repository.FeedRepository
 	cfg  *config.Config
@@ -34,7 +32,7 @@ func (r *RSSReader) Start() error {
 			r.bot.SendFeeds(user.ChatID, entries)
 		}
 
-		time.Sleep(timeout * time.Minute)
+		time.Sleep(time.Duration(r.cfg.ReaderTimeout) * time.Minute)
 	}
 }
 

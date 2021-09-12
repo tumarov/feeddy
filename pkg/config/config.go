@@ -6,12 +6,13 @@ import (
 )
 
 type Config struct {
-	Telegram    Telegram
-	Sentry      Sentry
-	DBPath      string
-	DBName      string `mapstructure:"db_name"`
-	Messages    Messages
-	Environment string
+	Telegram      Telegram
+	Sentry        Sentry
+	DBPath        string
+	DBName        string `mapstructure:"db_name"`
+	Messages      Messages
+	Environment   string
+	ReaderTimeout int `mapstructure:"reader_timeout"`
 }
 
 func Init() (*Config, error) {
