@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/tumarov/feeddy/pkg/config"
 	"github.com/tumarov/feeddy/pkg/logger"
@@ -27,7 +28,7 @@ func main() {
 
 	log := initLogger(builtin.NewBuiltinLogger())
 
-	db, err := bolt.Open(cfg.DBFile, 0666, &bolt.Options{Timeout: 2 * time.Second})
+	db, err := bolt.Open(fmt.Sprintf("%s/%s", cfg.DBPath, cfg.DBFile), 0666, &bolt.Options{Timeout: 2 * time.Second})
 	defer db.Close()
 	if err != nil {
 		log.Exception(err)
