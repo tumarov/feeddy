@@ -60,5 +60,5 @@ jobs:
             --restart always \
             --name $(echo $CONTAINER_NAME) \
             --network host \
-            -v /projects/feeddy/db:$(echo $DB_FILE)
+            -v /projects/feeddy/db:$(echo $DB_FILE) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
