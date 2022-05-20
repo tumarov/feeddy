@@ -1,16 +1,14 @@
 package main
 
 import (
-	"context"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/tumarov/feeddy/pkg/config"
 	"github.com/tumarov/feeddy/pkg/logger"
 	"github.com/tumarov/feeddy/pkg/logger/builtin"
 	rssParser "github.com/tumarov/feeddy/pkg/parser"
-	"github.com/tumarov/feeddy/pkg/repository/mongodb"
+	"github.com/tumarov/feeddy/pkg/repository/boltdb"
 	"github.com/tumarov/feeddy/pkg/telegram"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	bolt "go.etcd.io/bbolt"
 	l "log"
 	"time"
 )
@@ -29,14 +27,19 @@ func main() {
 
 	log := initLogger(builtin.NewBuiltinLogger())
 
-	db, err := initDB(cfg)
+	db, err := bolt.Open(cfg.DBFile, 0666, &bolt.Options{Timeout: 2 * time.Second})
+	defer db.Close()
 	if err != nil {
 		log.Exception(err)
 		l.Fatal(err)
 	}
 	log.Debugf("Connected to database")
 
-	feedRepository := mongodb.NewFeedRepository(db, cfg)
+	feedRepository, err := boltdb.NewFeedRepository(db, cfg)
+	if err != nil {
+		log.Exception(err)
+		l.Fatal(err)
+	}
 
 	telegramBot := telegram.NewBot(log, bot, feedRepository, cfg.Messages)
 
@@ -57,24 +60,4 @@ func main() {
 
 func initLogger(logger logger.Logger) logger.Logger {
 	return logger
-}
-
-func initDB(cfg *config.Config) (*mongo.Client, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.DBPath))
-	if err != nil {
-		return nil, err
-	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-
-	err = client.Connect(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return client, nil
 }
