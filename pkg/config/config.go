@@ -8,6 +8,7 @@ import (
 type Config struct {
 	Telegram      Telegram
 	Sentry        Sentry
+	DBFile        string
 	DBPath        string
 	DBName        string `mapstructure:"db_name"`
 	Messages      Messages
@@ -60,6 +61,7 @@ func parseEnv(cfg *Config) error {
 
 	cfg.Environment = viper.GetString("ENVIRONMENT")
 	cfg.DBPath = viper.GetString("DB_PATH")
+	cfg.DBFile = viper.GetString("DB_FILE")
 
 	cfg.Telegram.parseEnv(cfg)
 	cfg.Sentry.parseEnv(cfg)

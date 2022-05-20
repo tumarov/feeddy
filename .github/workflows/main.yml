@@ -54,9 +54,11 @@ jobs:
             export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             export ENVIRONMENT=${{ secrets.ENVIRONMENT }}
             export DB_PATH=${{ secrets.DB_PATH }}
+            export DB_FILE=${{ secrets.DB_FILE }}
             # Run a new container from a new image
             docker run -d -e TELEGRAM_BOT_TOKEN -e ENVIRONMENT -e DB_PATH \
             --restart always \
             --name $(echo $CONTAINER_NAME) \
             --network host \
+            -v /projects/feeddy/db:$(echo $DB_FILE)
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
