@@ -56,7 +56,7 @@ jobs:
             export DB_PATH=${{ secrets.DB_PATH }}
             export DB_FILE=${{ secrets.DB_FILE }}
             # Run a new container from a new image
-            docker run -d -e TELEGRAM_BOT_TOKEN -e ENVIRONMENT -e DB_PATH \
+            docker run -d -e TELEGRAM_BOT_TOKEN -e ENVIRONMENT -e DB_PATH -e DB_FILE \
             --restart always \
             --name $(echo $CONTAINER_NAME) \
             --network host \
